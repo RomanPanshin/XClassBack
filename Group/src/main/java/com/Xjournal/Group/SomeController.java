@@ -1,8 +1,8 @@
 package com.Xjournal.Group;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import static com.Xjournal.Group.Repo.postReqest;
+
 
 @RestController
 public class SomeController {
@@ -16,8 +16,14 @@ public class SomeController {
         return String.format("Hello %s!", name);
     }
 
-    @GetMapping("/auth")
-    public MyUser auth(@RequestParam(value = "myName", defaultValue = "World") String name) {
-        return new MyUser("ROMA", "secret657");
+    @PostMapping("/auth")
+    public MyUser auth(@RequestParam(value = "email") String email, @RequestParam(value = "password") String password) {
+        return  postReqest(email, password);
     }
+
+    @GetMapping("/UserList")
+    public String userList(@RequestHeader(value = "key") String key) {
+        return String.format("Hello %s!", key);
+    }
+
 }

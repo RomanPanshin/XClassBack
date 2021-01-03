@@ -2,17 +2,18 @@ package com.Xjournal.Group;
 
 public class MyUser {
     private String name;
-    private String password;
-    public MyUser(String name, String password){
+    private String key;
+    private String error;
+    public MyUser(String name, String key){
         this.name =name;
-        this.password = password;
+        this.key = key;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getPassword() {
-        return password;
+    public String getKey() {
+        return key;
     }
 }
