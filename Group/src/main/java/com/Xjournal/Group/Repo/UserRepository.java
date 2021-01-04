@@ -1,8 +1,6 @@
-package com.Xjournal.Group;
-
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
+package com.Xjournal.Group.Repo;
+import com.Xjournal.Group.Entity.MyUser;
+import com.Xjournal.Group.Repo.Repository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
@@ -17,37 +15,19 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-
-public class Repo {
-    public static final String URI_AUTH_REQUEST = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAgS9KmnXH3Gc84i0l6D3aPYQsO_KpQnvs";
-
-    public Repo(){
-            FileInputStream serviceAccount =
-                    null;
-            try {
-                serviceAccount = new FileInputStream("/Volumes/podarochek/1/Group/serviceAccountKey.json");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            FirebaseOptions options = null;
-            try {
-                options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .setDatabaseUrl("https://journal-da2a5-default-rtdb.firebaseio.com")
-                        .build();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            FirebaseApp.initializeApp(options);
-        }
+@Component
+@Scope("singleton")
+public class UserRepository extends Repository {
 
         public void createUser(String email,String password, String name) {
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
@@ -65,7 +45,34 @@ public class Repo {
             System.out.println("Successfully created new user: " + userRecord.getUid());
         }
 
-    public static MyUser postReqest(String email, String password){
+        public static void addClaims(){
+            UserRecord user = null;
+            try {
+                user = FirebaseAuth.getInstance().getUserByEmail("roma.super@icloud.com");
+            } catch (FirebaseAuthException e) {
+                e.printStackTrace();
+            }
+            Map<String, Object> claims = new HashMap<>();
+                claims.put("admin", true);
+            try {
+                FirebaseAuth.getInstance().setCustomUserClaims(user.getUid(), claims);
+            } catch (FirebaseAuthException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private String getClaims(String email){
+            UserRecord user = null;
+            try {
+                user = FirebaseAuth.getInstance().getUserByEmail(email);
+            } catch (FirebaseAuthException e) {
+                e.printStackTrace();
+            }
+            Map<String, Object> currentClaims = user.getCustomClaims();
+            return (String) currentClaims.keySet().iterator().next();
+        }
+
+    public MyUser postReqest(String email, String password){
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost(URI_AUTH_REQUEST);
 
@@ -93,9 +100,13 @@ public class Repo {
             try (InputStream stream = entity.getContent()) {
                 String jsonString =  IOUtils.toString(stream, StandardCharsets.UTF_8.name());
                 try {
+                   // System.out.println(jsonString);
                     JSONObject obj = new JSONObject(jsonString);
                     try {
-                        return new MyUser(FirebaseAuth.getInstance().getUserByEmail(email).getDisplayName(), obj.getString("idToken"));
+                        return new MyUser(FirebaseAuth.getInstance().getUserByEmail(email).getDisplayName(),
+                                obj.getString("idToken"),
+                                getClaims(email),
+                                FirebaseAuth.getInstance().getUserByEmail(email).getUid());
                     } catch (FirebaseAuthException e) {
                         e.printStackTrace();
                     }
@@ -107,6 +118,7 @@ public class Repo {
                 e.printStackTrace();
             }
         }
-        return new MyUser("", "error");
+        //not found
+        return null;
     }
 }
