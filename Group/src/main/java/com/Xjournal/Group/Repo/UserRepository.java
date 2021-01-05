@@ -1,6 +1,5 @@
 package com.Xjournal.Group.Repo;
 import com.Xjournal.Group.Entity.MyUser;
-import com.Xjournal.Group.Repo.Repository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
@@ -29,7 +28,11 @@ import java.util.Map;
 @Scope("singleton")
 public class UserRepository extends Repository {
 
-        public void createUser(String email,String password, String name) {
+    public static final String STUDENT = "student";
+    public static final String TEACHER = "teacher";
+    public static final String ADMIN = "admin";
+
+    public void createUser(String email, String password, String name, String claim) {
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                     .setEmail(email)
                     .setPassword(password)
@@ -42,18 +45,13 @@ public class UserRepository extends Repository {
             } catch (FirebaseAuthException e) {
                 e.printStackTrace();
             }
+            addClaims(userRecord, claim);
             System.out.println("Successfully created new user: " + userRecord.getUid());
         }
 
-        public static void addClaims(){
-            UserRecord user = null;
-            try {
-                user = FirebaseAuth.getInstance().getUserByEmail("roma.super@icloud.com");
-            } catch (FirebaseAuthException e) {
-                e.printStackTrace();
-            }
+        public void addClaims(UserRecord user, String claim){
             Map<String, Object> claims = new HashMap<>();
-                claims.put("admin", true);
+                claims.put(claim, true);
             try {
                 FirebaseAuth.getInstance().setCustomUserClaims(user.getUid(), claims);
             } catch (FirebaseAuthException e) {
@@ -61,7 +59,7 @@ public class UserRepository extends Repository {
             }
         }
 
-        private String getClaims(String email){
+        private static String getClaims(String email){
             UserRecord user = null;
             try {
                 user = FirebaseAuth.getInstance().getUserByEmail(email);
@@ -103,10 +101,11 @@ public class UserRepository extends Repository {
                    // System.out.println(jsonString);
                     JSONObject obj = new JSONObject(jsonString);
                     try {
-                        return new MyUser(FirebaseAuth.getInstance().getUserByEmail(email).getDisplayName(),
+                        UserRecord userByEmail = FirebaseAuth.getInstance().getUserByEmail(email);
+                        return new MyUser(userByEmail.getDisplayName(),
                                 obj.getString("idToken"),
                                 getClaims(email),
-                                FirebaseAuth.getInstance().getUserByEmail(email).getUid());
+                                userByEmail.getUid());
                     } catch (FirebaseAuthException e) {
                         e.printStackTrace();
                     }

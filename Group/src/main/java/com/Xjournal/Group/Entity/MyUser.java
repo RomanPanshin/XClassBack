@@ -5,6 +5,7 @@ public class MyUser {
     private String key;
     private String claim;
     private String uId;
+    private String classId;
 
     public MyUser(String name, String key, String claim, String uId){
         this.name =name;
