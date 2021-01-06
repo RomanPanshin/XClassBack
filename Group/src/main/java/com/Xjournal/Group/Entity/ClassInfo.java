@@ -1,11 +1,14 @@
 package com.Xjournal.Group.Entity;
 
-public class ClGroup {
+public class ClassInfo {
     private String id;
     private int grade;
     private String letter;
 
-    public ClGroup(int grade, String letter) {
+    public ClassInfo() {
+    }
+
+    public ClassInfo(int grade, String letter) {
         this.grade = grade;
         this.letter = letter;
         this.id = String.format("%d_%s", grade, letter);
@@ -21,5 +24,17 @@ public class ClGroup {
 
     public String getLetter() {
         return letter;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
+    public void setLetter(String letter) {
+        this.letter = letter;
     }
 }

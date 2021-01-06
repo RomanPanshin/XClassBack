@@ -1,7 +1,7 @@
 package com.Xjournal.Group.Entity;
 
 public class Date{
-    public enum day{
+    public enum DayOfWeek {
         Monday,
         Tuesday,
         Wednesday,
@@ -11,9 +11,13 @@ public class Date{
     }
 
     int numLesson;
-    private day code;
+    private DayOfWeek code;
 
-    public Date(day code,int numLesson) {
+    public Date() {
+
+    }
+
+    public Date(DayOfWeek code, int numLesson) {
         this.code = code;
         this.numLesson = numLesson;
     }
@@ -22,7 +26,15 @@ public class Date{
         return numLesson;
     }
 
-    public day getCode() {
+    public DayOfWeek getCode() {
         return code;
+    }
+
+    public void setNumLesson(int numLesson) {
+        this.numLesson = numLesson;
+    }
+
+    public void setCode(DayOfWeek code) {
+        this.code = code;
     }
 }

@@ -7,12 +7,18 @@ public class MyUser {
     private String uId;
     private String classId;
 
-    public MyUser(String name, String key, String claim, String uId){
+    public MyUser() {
+    }
+
+    public MyUser(String name, String key, String claim, String uId, String classId){
         this.name =name;
         this.key = key;
         this.claim = claim;
         this.uId = uId;
+        this.classId = classId;
     }
+
+    public String getClassId() { return classId; }
 
     public String getName() {
         return name;
@@ -28,5 +34,25 @@ public class MyUser {
 
     public String getuId() {
         return uId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setClaim(String claim) {
+        this.claim = claim;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
+    }
+
+    public void setClassId(String classId) {
+        this.classId = classId;
     }
 }

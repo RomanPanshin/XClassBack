@@ -1,8 +1,14 @@
 package com.Xjournal.Group.Repo;
 import com.Xjournal.Group.Entity.MyUser;
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import com.google.firebase.cloud.FirestoreClient;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,10 +29,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Component
 @Scope("singleton")
 public class UserRepository extends Repository {
+    private static final String COL_NAME="users";
 
     public static final String STUDENT = "student";
     public static final String TEACHER = "teacher";
@@ -49,6 +57,23 @@ public class UserRepository extends Repository {
             System.out.println("Successfully created new user: " + userRecord.getUid());
         }
 
+        public String getClassid(String uid){
+            Firestore dbFirestore = FirestoreClient.getFirestore();
+            CollectionReference cities = dbFirestore.collection(COL_NAME);
+
+            Query query = cities.whereEqualTo("uId", uid);
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            try {
+                MyUser user = (MyUser) querySnapshot.get().toObjects(MyUser.class);
+                return user.getClassId();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
         public void addClaims(UserRecord user, String claim){
             Map<String, Object> claims = new HashMap<>();
                 claims.put(claim, true);
@@ -59,7 +84,7 @@ public class UserRepository extends Repository {
             }
         }
 
-        private static String getClaims(String email){
+        private String getClaims(String email){
             UserRecord user = null;
             try {
                 user = FirebaseAuth.getInstance().getUserByEmail(email);
@@ -68,6 +93,17 @@ public class UserRepository extends Repository {
             }
             Map<String, Object> currentClaims = user.getCustomClaims();
             return (String) currentClaims.keySet().iterator().next();
+        }
+
+        public static String getNamebyUid(String uid){
+            UserRecord user = null;
+            try {
+                user = FirebaseAuth.getInstance().getUser(uid);
+                return user.getDisplayName();
+            } catch (FirebaseAuthException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
     public MyUser postReqest(String email, String password){
@@ -102,10 +138,12 @@ public class UserRepository extends Repository {
                     JSONObject obj = new JSONObject(jsonString);
                     try {
                         UserRecord userByEmail = FirebaseAuth.getInstance().getUserByEmail(email);
+                        String uid = userByEmail.getUid();
                         return new MyUser(userByEmail.getDisplayName(),
                                 obj.getString("idToken"),
                                 getClaims(email),
-                                userByEmail.getUid());
+                                uid,
+                                getClassid(uid));
                     } catch (FirebaseAuthException e) {
                         e.printStackTrace();
                     }

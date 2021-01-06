@@ -1,10 +1,13 @@
 package com.Xjournal.Group.Controller;
+import com.Xjournal.Group.DBGenerator;
+import com.Xjournal.Group.Entity.ClassInfo;
 import com.Xjournal.Group.Entity.MyUser;
 import com.Xjournal.Group.Entity.Result;
-import com.Xjournal.Group.Repo.DataRepository;
 import com.Xjournal.Group.Repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.ExecutionException;
 
 
 @RestController
@@ -12,11 +15,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private DataRepository dataRepository;
-
+    private DBGenerator dbGenerator;
     @GetMapping("/")
-    public Result<String> sayHello() {
-        dataRepository.addLessons();
+    public Result<String> sayHello() throws ExecutionException, InterruptedException {
         return new Result<String>(Result.ResultEnum.Success, String.format("Hello %s!", "Roma"));
     }
 
@@ -32,6 +33,11 @@ public class UserController {
     @GetMapping("/userList")
     public String userList(@RequestHeader(value = "key") String key) {
         return String.format("Hello %s!", key);
+    }
+
+    @GetMapping("/generateDB")
+    public void generateDB() {
+
     }
 
 }
