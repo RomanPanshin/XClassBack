@@ -20,7 +20,6 @@ public class LessonController{
 
         @GetMapping("/lessons/getSchedule")
         public Result<ArrayList<Lesson>> getSchedule(@RequestParam(value = "classId") String classId, @RequestParam(value = "dayOfWeek") Date.DayOfWeek dayOfWeek ) {
-
             try {
                 // получить пользователя и его класс
                 Result<ArrayList<Lesson>> arrayListResult = new Result<ArrayList<Lesson>>(
@@ -35,4 +34,20 @@ public class LessonController{
             }
             return new Result<ArrayList<Lesson>>(Result.ResultEnum.Error, null);
         }
+    @GetMapping("/lessons/getSchedule/teacher")
+    public Result<ArrayList<Lesson>> getScheduleForTeacher(@RequestParam(value = "teacherId") String teacherId, @RequestParam(value = "dayOfWeek") Date.DayOfWeek dayOfWeek ) {
+        try {
+            // получить пользователя и его класс
+            Result<ArrayList<Lesson>> arrayListResult = new Result<ArrayList<Lesson>>(
+                    Result.ResultEnum.Success,
+                    lessonRepository.getForTeacherIdAndDay(teacherId, dayOfWeek)
+            );
+            return arrayListResult;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return new Result<ArrayList<Lesson>>(Result.ResultEnum.Error, null);
+    }
 }

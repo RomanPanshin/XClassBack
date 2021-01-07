@@ -37,6 +37,22 @@ public class LessonRepository {
         return result;
     }
 
+    public ArrayList<Lesson> getForTeacherIdAndDay(String uId, Date.DayOfWeek day) throws InterruptedException, ExecutionException {
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        CollectionReference cities = dbFirestore.collection(COL_NAME);
+
+        Query query = cities.whereEqualTo(UserRepository.TEACHER, uId).whereEqualTo("date.code",day);
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        ArrayList<Lesson> result = new ArrayList<Lesson>();
+        for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+            Lesson obj = document.toObject(Lesson.class);
+            obj.setTeacher(UserRepository.getNamebyUid(obj.getTeacher()));
+            result.add(obj);
+        }
+        return result;
+    }
+
     public Lesson getLessonDetails(String name) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection(COL_NAME).document(name);
