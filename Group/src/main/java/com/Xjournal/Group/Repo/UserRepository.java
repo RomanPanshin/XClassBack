@@ -64,7 +64,8 @@ public class UserRepository extends Repository {
             Query query = cities.whereEqualTo("uId", uid);
             ApiFuture<QuerySnapshot> querySnapshot = query.get();
             try {
-                MyUser user = (MyUser) querySnapshot.get().toObjects(MyUser.class);
+                MyUser user = (MyUser) querySnapshot.get().toObjects(MyUser.class).get(0);
+
                 return user.getClassId();
             } catch (InterruptedException e) {
                 e.printStackTrace();
