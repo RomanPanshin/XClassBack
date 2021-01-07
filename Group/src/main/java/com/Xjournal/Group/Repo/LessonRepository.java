@@ -25,7 +25,7 @@ public class LessonRepository {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference cities = dbFirestore.collection(COL_NAME);
 
-        Query query = cities.whereEqualTo("idclass", classId).whereEqualTo("date.code",day);
+        Query query = cities.whereEqualTo("idclass", classId).whereEqualTo("date.code",day).orderBy("date.numLesson");
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         ArrayList<Lesson> result = new ArrayList<Lesson>();
@@ -41,7 +41,7 @@ public class LessonRepository {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference cities = dbFirestore.collection(COL_NAME);
 
-        Query query = cities.whereEqualTo(UserRepository.TEACHER, uId).whereEqualTo("date.code",day);
+        Query query = cities.whereEqualTo(UserRepository.TEACHER, uId).whereEqualTo("date.code",day).orderBy("date.numLesson");
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         ArrayList<Lesson> result = new ArrayList<Lesson>();
