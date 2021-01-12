@@ -1,11 +1,11 @@
 package com.Xjournal.Group.Controller;
 import com.Xjournal.Group.DBGenerator;
-import com.Xjournal.Group.Entity.ClassInfo;
 import com.Xjournal.Group.Entity.MyUser;
 import com.Xjournal.Group.Entity.Result;
 import com.Xjournal.Group.Repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.concurrent.ExecutionException;
 
@@ -16,6 +16,8 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private DBGenerator dbGenerator;
+
+
     @GetMapping("/")
     public Result<String> sayHello() throws ExecutionException, InterruptedException {
         return new Result<String>(Result.ResultEnum.Success, String.format("Hello %s!", "Roma"));
@@ -35,9 +37,10 @@ public class UserController {
         return String.format("Hello %s!", key);
     }
 
-    @GetMapping("/generateDB")
-    public void generateDB() {
-
-    }
-
+//    @GetMapping("/generateDB")
+//    public String generateDB() {
+////            fileRepository.createBucket();
+////            return "aa";
+//
+//    }
 }
