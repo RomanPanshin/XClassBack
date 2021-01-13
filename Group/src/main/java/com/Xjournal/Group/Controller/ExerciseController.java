@@ -28,15 +28,7 @@ import java.util.UUID;
 public class ExerciseController {
     @Autowired
     private Storage storageService;
-    private String staticResURL;
-
-    {
-        try {
-            staticResURL ="http://" + Inet4Address.getLocalHost().getHostAddress() + ":8080" + "/r/";
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-    }
+    private String staticResURL = "http://borovik.fun:8080/r/";
 
     @RequestMapping(value = "/UploadExerciseWithFile", method = RequestMethod.POST,
             consumes = {"multipart/form-data"})
