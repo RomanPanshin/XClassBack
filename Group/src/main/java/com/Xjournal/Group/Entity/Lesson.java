@@ -7,7 +7,7 @@ public class Lesson {
     private String name;
     private String teacher;
     private String idclass;
-    private Date date;
+    private GroupDate groupDate;
 
     public String getName() {
         return name;
@@ -21,8 +21,8 @@ public class Lesson {
         return idclass;
     }
 
-    public Date getDate() {
-        return date;
+    public GroupDate getDate() {
+        return groupDate;
     }
 
     public void setId(String id) {
@@ -41,8 +41,8 @@ public class Lesson {
         this.idclass = idclass;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate(GroupDate groupDate) {
+        this.groupDate = groupDate;
     }
 
     public Lesson() {
@@ -50,12 +50,12 @@ public class Lesson {
     }
 
 
-    public Lesson(String name, String teacher, String idclass, Date date) {
+    public Lesson(String name, String teacher, String idclass, GroupDate groupDate) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.teacher = teacher;
         this.idclass = idclass;
-        this.date = date;
+        this.groupDate = groupDate;
     }
 
     public String getId() {
@@ -70,7 +70,7 @@ public class Lesson {
                 ", name='" + name + '\'' +
                 ", teacher='" + teacher + '\'' +
                 ", idclass='" + idclass + '\'' +
-                ", date=" + date +
+                ", date=" + groupDate +
                 '}';
     }
 

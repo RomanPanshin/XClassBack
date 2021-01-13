@@ -1,3 +1,12 @@
+/*
+ * Wrote by Panshin Roman (roma.super@icloud.com) in 13.01.21
+ * UserRepository for Xclass
+ * Xclass - mobile study application
+ * Copyright (c) 2021, Roman Panshin
+ * All rights reserved.
+ */
+
+
 package com.Xjournal.Group.Repo;
 import com.Xjournal.Group.Entity.MyUser;
 import com.google.api.core.ApiFuture;
@@ -64,7 +73,7 @@ public class UserRepository extends Repository {
             Query query = cities.whereEqualTo("uId", uid);
             ApiFuture<QuerySnapshot> querySnapshot = query.get();
             try {
-                MyUser user = (MyUser) querySnapshot.get().toObjects(MyUser.class).get(0);
+                MyUser user = querySnapshot.get().toObjects(MyUser.class).get(0);
 
                 return user.getClassId();
             } catch (InterruptedException e) {

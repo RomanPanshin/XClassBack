@@ -1,6 +1,6 @@
 package com.Xjournal.Group.Repo;
 
-import com.Xjournal.Group.Entity.Date;
+import com.Xjournal.Group.Entity.GroupDate;
 import com.Xjournal.Group.Entity.Lesson;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
@@ -21,7 +21,7 @@ public class LessonRepository {
         ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(lesson.getId()).set(lesson);
     }
 
-    public ArrayList<Lesson> getForClassIdAndDay(String classId, Date.DayOfWeek day) throws InterruptedException, ExecutionException {
+    public ArrayList<Lesson> getForClassIdAndDay(String classId, GroupDate.DayOfWeek day) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference cities = dbFirestore.collection(COL_NAME);
 
@@ -37,7 +37,7 @@ public class LessonRepository {
         return result;
     }
 
-    public ArrayList<Lesson> getForTeacherIdAndDay(String uId, Date.DayOfWeek day) throws InterruptedException, ExecutionException {
+    public ArrayList<Lesson> getForTeacherIdAndDay(String uId, GroupDate.DayOfWeek day) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference cities = dbFirestore.collection(COL_NAME);
 

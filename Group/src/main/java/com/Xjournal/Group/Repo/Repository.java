@@ -1,8 +1,11 @@
 package com.Xjournal.Group.Repo;
 
+
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +33,5 @@ abstract class Repository {
             e.printStackTrace();
         }
         FirebaseApp.initializeApp(options);
-
     }
 }
