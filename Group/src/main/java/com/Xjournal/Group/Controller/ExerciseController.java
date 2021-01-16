@@ -9,17 +9,17 @@ package com.Xjournal.Group.Controller;
 
 
 import com.Xjournal.Group.Entity.Exercise;
+import com.Xjournal.Group.Entity.GroupDate;
 import com.Xjournal.Group.Entity.Result;
 import com.Xjournal.Group.Exception.StorageException;
-import com.Xjournal.Group.Service.Storage;
+import com.Xjournal.Group.Repo.ExerciseRepository;
+import com.Xjournal.Group.Service.StorageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -27,7 +27,9 @@ import java.util.UUID;
 @RestController
 public class ExerciseController {
     @Autowired
-    private Storage storageService;
+    private StorageService storageService;
+    @Autowired
+    private ExerciseRepository exerciseRepository;
     private String staticResURL = "http://borovik.fun:8080/r/";
 
     @RequestMapping(value = "/UploadExerciseWithFile", method = RequestMethod.POST,
@@ -36,9 +38,9 @@ public class ExerciseController {
                                  @RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "description") String description) {
         ArrayList<String> names = storageService.uploadFile(file);
         Exercise ex = new Exercise(UUID.randomUUID().toString(), lessonId, description,
-                names.get(Storage.ORIGINAL_FILE_NAME), staticResURL + names.get(Storage.UNIC_FILE_ID),
+                names.get(StorageService.ORIGINAL_FILE_NAME), staticResURL + names.get(StorageService.UNIC_FILE_ID),
                 simpleDate);
-        storageService.sendExerciseToDB(ex);
+        exerciseRepository.sendExerciseToDB(ex);
         return new Result<String>(Result.ResultEnum.Success, "");
     }
 
@@ -48,8 +50,16 @@ public class ExerciseController {
                                  @RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "description") String description) {
         Exercise ex = new Exercise(UUID.randomUUID().toString(), lessonId, description,
                 null, null, simpleDate);
-        storageService.sendExerciseToDB(ex);
+        exerciseRepository.sendExerciseToDB(ex);
         return new Result<String>(Result.ResultEnum.Success, "");
+    }
+
+    @GetMapping(value = "/GetExerciseBySimpleDateAndLessonId")
+    public Result<Exercise> getExercise(@RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "lessonId") String lessonId){
+        Exercise ex = exerciseRepository.getExerciseByDateAndLessonId(simpleDate, lessonId);
+        return ex == null ?
+                new Result<Exercise>(Result.ResultEnum.Error, null) :
+                new Result<Exercise>(Result.ResultEnum.Success, ex);
     }
 
     @ExceptionHandler(StorageException.class)

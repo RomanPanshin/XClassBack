@@ -29,8 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class Storage {
-    public static final String COL_NAME="exercises";
+public class StorageService {
     public static final int ORIGINAL_FILE_NAME = 0;
     public static final int UNIC_FILE_ID = 1;
 
@@ -56,18 +55,9 @@ public class Storage {
             throw new StorageException(msg, e);
         }
     }
+
     private String getExtensionByName(String filename) {
         return "."+ FilenameUtils.getExtension(filename);
     }
-    public void sendExerciseToDB(Exercise ex){
-        Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(ex.getId()).set(ex);
-        try {
-            System.out.println("Update time : " + collectionsApiFuture.get().getUpdateTime());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
+
 }
