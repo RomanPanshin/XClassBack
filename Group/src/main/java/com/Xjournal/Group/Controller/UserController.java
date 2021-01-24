@@ -18,12 +18,6 @@ public class UserController {
     @Autowired
     private DBGenerator dbGenerator;
 
-
-    @GetMapping("/")
-    public Result<String> sayHello() throws ExecutionException, InterruptedException {
-        return new Result<String>(Result.ResultEnum.Success, String.format("Hello %s!", "Roma"));
-    }
-
     @GetMapping("/getUserByClassId")
     public Result<ArrayList<MyUser>> getUserById(@RequestParam(value = "idclass") String idclass){
         try {

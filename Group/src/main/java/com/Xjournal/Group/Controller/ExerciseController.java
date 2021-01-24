@@ -14,6 +14,7 @@ import com.Xjournal.Group.Exception.StorageException;
 import com.Xjournal.Group.Repo.ExerciseRepository;
 import com.Xjournal.Group.Service.StorageService;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
