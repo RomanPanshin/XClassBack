@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class StorageService {
+    public String staticResURL = "http://borovik.fun:8080/r/";
     public static final int ORIGINAL_FILE_NAME = 0;
     public static final int UNIC_FILE_ID = 1;
 

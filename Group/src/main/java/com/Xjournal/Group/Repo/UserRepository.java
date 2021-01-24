@@ -8,12 +8,10 @@
 
 
 package com.Xjournal.Group.Repo;
+import com.Xjournal.Group.Entity.Lesson;
 import com.Xjournal.Group.Entity.MyUser;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
@@ -64,6 +62,20 @@ public class UserRepository extends Repository {
             }
             addClaims(userRecord, claim);
             System.out.println("Successfully created new user: " + userRecord.getUid());
+        }
+
+        public ArrayList<MyUser> usersByClassId(String idclass) throws ExecutionException, InterruptedException {
+            Firestore dbFirestore = FirestoreClient.getFirestore();
+            CollectionReference cities = dbFirestore.collection(COL_NAME);
+
+            Query query = cities.whereEqualTo("idclass", idclass);
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            ArrayList<MyUser> result = new ArrayList<MyUser>();
+            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                MyUser obj = document.toObject(MyUser.class);
+                result.add(obj);
+            }
+            return result;
         }
 
         public String getClassid(String uid){

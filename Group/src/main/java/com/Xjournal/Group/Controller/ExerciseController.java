@@ -9,7 +9,6 @@ package com.Xjournal.Group.Controller;
 
 
 import com.Xjournal.Group.Entity.Exercise;
-import com.Xjournal.Group.Entity.GroupDate;
 import com.Xjournal.Group.Entity.Result;
 import com.Xjournal.Group.Exception.StorageException;
 import com.Xjournal.Group.Repo.ExerciseRepository;
@@ -30,28 +29,27 @@ public class ExerciseController {
     private StorageService storageService;
     @Autowired
     private ExerciseRepository exerciseRepository;
-    private String staticResURL = "http://borovik.fun:8080/r/";
 
     @RequestMapping(value = "/UploadExerciseWithFile", method = RequestMethod.POST,
             consumes = {"multipart/form-data"})
-    public Result<String> uploadExerciseWithFile(@RequestParam MultipartFile file, @RequestParam(value = "lessonId") String lessonId,
+    public Result<Exercise> uploadExerciseWithFile(@RequestParam MultipartFile file, @RequestParam(value = "lessonId") String lessonId,
                                  @RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "description") String description) {
         ArrayList<String> names = storageService.uploadFile(file);
         Exercise ex = new Exercise(UUID.randomUUID().toString(), lessonId, description,
-                names.get(StorageService.ORIGINAL_FILE_NAME), staticResURL + names.get(StorageService.UNIC_FILE_ID),
+                names.get(StorageService.ORIGINAL_FILE_NAME), storageService.staticResURL + names.get(StorageService.UNIC_FILE_ID),
                 simpleDate);
         exerciseRepository.sendExerciseToDB(ex);
-        return new Result<String>(Result.ResultEnum.Success, "");
+        return new Result<Exercise>(Result.ResultEnum.Success, ex);
     }
 
     @RequestMapping(value = "/UploadExercise", method = RequestMethod.POST,
             consumes = {"multipart/form-data"})
-    public Result<String> uploadExercise(@RequestParam(value = "lessonId") String lessonId,
+    public Result<Exercise> uploadExercise(@RequestParam(value = "lessonId") String lessonId,
                                  @RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "description") String description) {
         Exercise ex = new Exercise(UUID.randomUUID().toString(), lessonId, description,
                 null, null, simpleDate);
         exerciseRepository.sendExerciseToDB(ex);
-        return new Result<String>(Result.ResultEnum.Success, "");
+        return new Result<Exercise>(Result.ResultEnum.Success, ex);
     }
 
     @GetMapping(value = "/GetExerciseBySimpleDateAndLessonId")

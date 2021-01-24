@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 
@@ -21,6 +22,19 @@ public class UserController {
     @GetMapping("/")
     public Result<String> sayHello() throws ExecutionException, InterruptedException {
         return new Result<String>(Result.ResultEnum.Success, String.format("Hello %s!", "Roma"));
+    }
+
+    @GetMapping("/getUserByClassId")
+    public Result<ArrayList<MyUser>> getUserById(@RequestHeader(value = "idclass") String idclass){
+        try {
+            ArrayList<MyUser> res = userRepository.usersByClassId(idclass);
+            return new Result<>(Result.ResultEnum.Success, res);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new Result<>(Result.ResultEnum.Error, null);
     }
 
     @PostMapping("/auth")
