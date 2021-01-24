@@ -8,6 +8,8 @@ public class Homework {
     private String fileURL;
     private String UID;
 
+    public Homework() {}
+
     public Homework(String id, String exerciseId, String description, String filename, String fileURL, String UID) {
         Id = id;
         this.exerciseId = exerciseId;
