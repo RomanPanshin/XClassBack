@@ -68,7 +68,7 @@ public class UserRepository extends Repository {
             Firestore dbFirestore = FirestoreClient.getFirestore();
             CollectionReference cities = dbFirestore.collection(COL_NAME);
 
-            Query query = cities.whereEqualTo("idclass", idclass);
+            Query query = cities.whereEqualTo("classId", idclass);
             ApiFuture<QuerySnapshot> querySnapshot = query.get();
             ArrayList<MyUser> result = new ArrayList<MyUser>();
             for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {

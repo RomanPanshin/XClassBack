@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/getUserByClassId")
-    public Result<ArrayList<MyUser>> getUserById(@RequestHeader(value = "idclass") String idclass){
+    public Result<ArrayList<MyUser>> getUserById(@RequestParam(value = "idclass") String idclass){
         try {
             ArrayList<MyUser> res = userRepository.usersByClassId(idclass);
             return new Result<>(Result.ResultEnum.Success, res);
