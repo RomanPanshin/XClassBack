@@ -28,18 +28,12 @@ public class ExerciseRepository {
         }
     }
 
-    public Exercise getExerciseByDateAndLessonId(String simpleDate, String lessonId){
+    public Exercise getExerciseByDateAndLessonId(String simpleDate, String lessonId) throws ExecutionException, InterruptedException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        CollectionReference cities = dbFirestore.collection(COL_NAME);
-        Query query = cities.whereEqualTo("simpleDate", simpleDate).whereEqualTo("lessonId",lessonId);
+        CollectionReference exercises = dbFirestore.collection(COL_NAME);
+        Query query = exercises.whereEqualTo("simpleDate", simpleDate).whereEqualTo("lessonId",lessonId);
         List<QueryDocumentSnapshot> documentSnapshots = null;
-        try {
-            documentSnapshots = query.get().get().getDocuments();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        documentSnapshots = query.get().get().getDocuments();
         if(documentSnapshots.isEmpty()){
             System.out.println("Не найдено задание");
             return null;

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 
 @RestController
@@ -33,8 +34,10 @@ public class ExerciseController {
 
     @RequestMapping(value = "/UploadExerciseWithFile", method = RequestMethod.POST,
             consumes = {"multipart/form-data"})
-    public Result<Exercise> uploadExerciseWithFile(@RequestParam MultipartFile file, @RequestParam(value = "lessonId") String lessonId,
-                                 @RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "description") String description) {
+    public Result<Exercise> uploadExerciseWithFile(@RequestParam MultipartFile file,
+                                                   @RequestParam(value = "lessonId") String lessonId,
+                                                   @RequestParam(value = "simpleDate") String simpleDate,
+                                                   @RequestParam(value = "description") String description) {
         ArrayList<String> names = storageService.uploadFile(file);
         Exercise ex = new Exercise(UUID.randomUUID().toString(), lessonId, description,
                 names.get(StorageService.ORIGINAL_FILE_NAME), storageService.staticResURL + names.get(StorageService.UNIC_FILE_ID),
@@ -46,7 +49,8 @@ public class ExerciseController {
     @RequestMapping(value = "/UploadExercise", method = RequestMethod.POST,
             consumes = {"multipart/form-data"})
     public Result<Exercise> uploadExercise(@RequestParam(value = "lessonId") String lessonId,
-                                 @RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "description") String description) {
+                                           @RequestParam(value = "simpleDate") String simpleDate,
+                                           @RequestParam(value = "description") String description) {
         Exercise ex = new Exercise(UUID.randomUUID().toString(), lessonId, description,
                 null, null, simpleDate);
         exerciseRepository.sendExerciseToDB(ex);
@@ -54,8 +58,16 @@ public class ExerciseController {
     }
 
     @GetMapping(value = "/GetExerciseBySimpleDateAndLessonId")
-    public Result<Exercise> getExercise(@RequestParam(value = "simpleDate") String simpleDate, @RequestParam(value = "lessonId") String lessonId){
-        Exercise ex = exerciseRepository.getExerciseByDateAndLessonId(simpleDate, lessonId);
+    public Result<Exercise> getExercise(@RequestParam(value = "simpleDate") String simpleDate,
+                                        @RequestParam(value = "lessonId") String lessonId){
+        Exercise ex = null;
+        try {
+            ex = exerciseRepository.getExerciseByDateAndLessonId(simpleDate, lessonId);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return ex == null ?
                 new Result<Exercise>(Result.ResultEnum.Error, null) :
                 new Result<Exercise>(Result.ResultEnum.Success, ex);
