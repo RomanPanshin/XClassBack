@@ -19,6 +19,8 @@ public class AdditionalFile {
         this.id = UUID.randomUUID().toString();
     }
 
+
+
     public String getFileUrl() {
         return fileUrl;
     }

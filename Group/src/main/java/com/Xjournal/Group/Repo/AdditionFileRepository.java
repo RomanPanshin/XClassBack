@@ -32,7 +32,7 @@ public class AdditionFileRepository {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference cities = dbFirestore.collection(COL_NAME);
 
-        Query query = cities.whereEqualTo("ALessonId", ALessonId);
+        Query query = cities.whereEqualTo("alessonId", ALessonId);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         ArrayList<AdditionalFile> result = new ArrayList<>();
