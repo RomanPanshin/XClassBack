@@ -29,7 +29,7 @@ public class AdditionalInfoController {
                                                          @RequestParam(value = "description") String description) {
         ArrayList<String> names = storageService.uploadFile(file);
         AdditionalFile res = new AdditionalFile(ALessonId, description,
-                                names.get(StorageService.ORIGINAL_FILE_NAME), names.get(StorageService.UNIC_FILE_ID));
+                                names.get(StorageService.ORIGINAL_FILE_NAME), StorageService.staticResURL + names.get(StorageService.UNIC_FILE_ID));
         additionFileRepository.sendFileToDB(res);
         return new Result<AdditionalFile>(Result.ResultEnum.Success, res);
     }
