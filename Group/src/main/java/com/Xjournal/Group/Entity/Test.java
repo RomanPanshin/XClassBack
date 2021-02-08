@@ -48,6 +48,14 @@ public class Test {
         this.lessonId = lessonId;
         this.date = date;
         this.id = UUID.randomUUID().toString();
+
+    }
+    public Test(String description, ArrayList<Question> questions, String lessonId, String date, String id) {
+        this.description = description;
+        this.questions = questions;
+        this.lessonId = lessonId;
+        this.date = date;
+        this.id = id;
     }
 
     public void toFalse(){
@@ -67,7 +75,14 @@ public class Test {
         this.questions = new ArrayList<Question>();
     }
 
+    public Test(Test test){
+        this(test.getDescription(), test.getQuestions(), test.getLessonId(), test.getDate(), test.getId());
+    }
+
     public void setId(String id) {
         this.id = id;
     }
+
+
+
 }

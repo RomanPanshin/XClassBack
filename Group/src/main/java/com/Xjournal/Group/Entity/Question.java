@@ -52,5 +52,29 @@ public class Question {
         this.answers = answers;
     }
 
+    public boolean checkWith(Question q){
+        HashMap<String, Boolean> studentAnswers = q.getAnswers();
+        HashMap<String, Boolean> teacherAnswers = this.getAnswers();
+        boolean result = true;
+        System.out.println("----");
+        System.out.println(studentAnswers);
+        System.out.println(teacherAnswers);
+        System.out.println("----");
+        for (String key : teacherAnswers.keySet()) {
+
+            result = (teacherAnswers.get(key) == studentAnswers.get(key)) && result;
+        }
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "description='" + description + '\'' +
+                ", answers=" + answers +
+                ", id='" + id + '\'' +
+                '}';
+    }
+
     public Question(){}
 }

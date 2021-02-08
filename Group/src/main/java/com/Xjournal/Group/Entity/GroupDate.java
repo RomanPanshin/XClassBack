@@ -6,6 +6,7 @@ public class GroupDate {
         Tuesday,
         Wednesday,
         Thursday,
+        Friday,
         Saturday,
         Sunday
     }

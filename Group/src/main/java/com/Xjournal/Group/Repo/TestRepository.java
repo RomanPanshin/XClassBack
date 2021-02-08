@@ -45,6 +45,12 @@ public class TestRepository {
     }
 
     public Test getTestForSolve(String id) throws ExecutionException, InterruptedException {
+        Test test = getTest(id);
+        test.toFalse();
+        return test;
+    }
+
+    public Test getTest(String id) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference tests = dbFirestore.collection(COL_NAME);
 
@@ -56,10 +62,7 @@ public class TestRepository {
                 Test obj = document.toObject(Test.class);
                 testArray.add(obj);
             }
-
-        Test test = testArray.get(0);
-        test.toFalse();
-        return test;
+        return testArray.get(0);
     }
 
 }

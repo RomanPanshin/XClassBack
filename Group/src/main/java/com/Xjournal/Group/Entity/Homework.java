@@ -11,7 +11,7 @@ public class Homework {
     public Homework() {}
 
     public Homework(String id, String exerciseId, String description, String filename, String fileURL, String UID) {
-        Id = id;
+        this.Id = id;
         this.exerciseId = exerciseId;
         this.description = description;
         this.filename = filename;
