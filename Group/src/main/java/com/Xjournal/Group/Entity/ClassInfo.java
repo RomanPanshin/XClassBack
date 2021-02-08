@@ -2,23 +2,23 @@ package com.Xjournal.Group.Entity;
 
 public class ClassInfo {
     private String id;
-    private int grade;
+    private String grade;
     private String letter;
 
     public ClassInfo() {
     }
 
-    public ClassInfo(int grade, String letter) {
+    public ClassInfo(String grade, String letter) {
         this.grade = grade;
         this.letter = letter;
-        this.id = String.format("%d_%s", grade, letter);
+        this.id = String.format("%s_%s", grade, letter);
     }
 
     public String getId() {
         return id;
     }
 
-    public int getGrade() {
+    public String getGrade() {
         return grade;
     }
 
@@ -30,7 +30,7 @@ public class ClassInfo {
         this.id = id;
     }
 
-    public void setGrade(int grade) {
+    public void setGrade(String grade) {
         this.grade = grade;
     }
 

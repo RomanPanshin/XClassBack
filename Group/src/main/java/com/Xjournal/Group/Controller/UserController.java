@@ -45,10 +45,6 @@ public class UserController {
         return String.format("Hello %s!", key);
     }
 
-//    @GetMapping("/generateDB")
-//    public String generateDB() {
-////            fileRepository.createBucket();
-////            return "aa";
-//
-//    }
+
+
 }

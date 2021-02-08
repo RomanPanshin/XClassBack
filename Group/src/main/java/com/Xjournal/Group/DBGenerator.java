@@ -1,24 +1,16 @@
 package com.Xjournal.Group;
 
-import com.Xjournal.Group.Entity.ClassInfo;
+import com.Xjournal.Group.Entity.*;
 import com.Xjournal.Group.Entity.GroupDate;
-import com.Xjournal.Group.Entity.GroupDate;
-import com.Xjournal.Group.Entity.Lesson;
-import com.Xjournal.Group.Entity.MyUser;
+import com.Xjournal.Group.Repo.AdditionalLessonRepository;
 import com.Xjournal.Group.Repo.ClassInfoRepository;
 import com.Xjournal.Group.Repo.LessonRepository;
 import com.Xjournal.Group.Repo.UserRepository;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.cloud.FirestoreClient;
-import com.google.type.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -28,9 +20,11 @@ public class DBGenerator {
     private UserRepository userRepository;
     @Autowired
     private LessonRepository lessonRepository;
-
     @Autowired
     private ClassInfoRepository classInfoRepository;
+    @Autowired
+    private AdditionalLessonRepository additionalLessonRepository;
+
 
     private ArrayList<String> teachers = new ArrayList<>();
     private ArrayList<ClassInfo> classes = new ArrayList<>();
@@ -54,6 +48,16 @@ public class DBGenerator {
             "ИЗО (рисование)",
             "Физическая культура"
     };
+
+    public void generateAdditionalLessons(){
+        for(String ln : lessonNames){
+            for(String ch : classNames){
+                for(int i = 1; i != 12; i++){
+                    additionalLessonRepository.sendALessonToDB(new AdditionalLesson(ln, i + "_" + ch));
+                }
+            }
+        }
+    }
 
     private String[] names = {
             " Михаил Александрович",
@@ -131,7 +135,7 @@ public class DBGenerator {
     private void generateClasses() throws ExecutionException, InterruptedException {
         for (int i = 0; i < classCount; i++) {
             for (int j = 0; j < classNames.length; j++) {
-                ClassInfo classInfo = new ClassInfo(i+1,classNames[j]);
+                ClassInfo classInfo = new ClassInfo(Integer.toString(i + 1),classNames[j]);
                 classInfoRepository.addClassInfo(classInfo);
                 classes.add(classInfo);
             }

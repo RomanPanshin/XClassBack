@@ -11,8 +11,9 @@ public class RootController {
     @Autowired
     DBGenerator dbGenerator;
     @RequestMapping(method = RequestMethod.GET)
-    public String swaggerUi() {
+    public void swaggerUi() {
         dbGenerator.Generate();
-        return "Oh Yes!";
+        dbGenerator.generateAdditionalLessons();
+        return;
     }
 }
