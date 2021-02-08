@@ -12,9 +12,7 @@ import com.Xjournal.Group.Entity.Lesson;
 import com.Xjournal.Group.Entity.MyUser;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.UserRecord;
+import com.google.firebase.auth.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -64,7 +62,41 @@ public class UserRepository extends Repository {
             System.out.println("Successfully created new user: " + userRecord.getUid());
         }
 
-        public ArrayList<MyUser> usersByClassId(String idclass) throws ExecutionException, InterruptedException {
+    public String createUser(String email, String password, String name, String claim, String classId) {
+        UserRecord.CreateRequest request = new UserRecord.CreateRequest()
+                .setEmail(email)
+                .setPassword(password)
+                .setDisplayName(name);
+
+        String result = null;
+        UserRecord userRecord = null;
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+
+        try {
+            userRecord = FirebaseAuth.getInstance().createUser(request);
+
+            result = userRecord.getUid();
+            MyUser u = new MyUser(name,null,claim,result,classId);
+            dbFirestore.collection(COL_NAME).document(u.getuId()).set(u);
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
+        }
+        addClaims(userRecord, claim);
+        System.out.println("Successfully created new user: " + userRecord.getUid());
+        return result;
+    }
+
+    public void DeleteUsers() throws FirebaseAuthException {
+        ListUsersPage page = FirebaseAuth.getInstance().listUsers(null);
+        ArrayList<String> users = new ArrayList<>();
+        for (ExportedUserRecord user : page.iterateAll()) {
+            users.add(user.getUid());
+        }
+        FirebaseAuth.getInstance().deleteUsers(users);
+    }
+
+
+    public ArrayList<MyUser> usersByClassId(String idclass) throws ExecutionException, InterruptedException {
             Firestore dbFirestore = FirestoreClient.getFirestore();
             CollectionReference cities = dbFirestore.collection(COL_NAME);
 
