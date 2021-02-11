@@ -1,21 +1,22 @@
 from twilio.jwt.access_token import AccessToken
-from twilio.jwt.access_token.grants import ChatGrant
+from twilio.jwt.access_token.grants import VideoGrant
+import os
+import sys
 
 # required for all twilio access tokens
+# required for all twilio access tokens
 account_sid = 'AC7a6351ad5a1ff9a5ffd302b3b5c0f08a'
-api_key = 'SK58068f04409f7dd9d7bb78f57a05c2f1'
-api_secret = 'xxxxxxxxxxxxxx'
+api_key = 'SK57f1cf41380573124d33146f18c6b2bd'
+api_secret = 'WEG8wGCiZ25s7YV4LynJqLKronviWAtw'
 
-# required for Chat grants
-service_sid = 'ISxxxxxxxxxxxx'
-identity = 'user@example.com'
+identity = sys.argv[1]
 
-# Create access token with credentials
+# Create Access Token with credentials
 token = AccessToken(account_sid, api_key, api_secret, identity=identity)
 
-# Create an Chat grant and add to token
-chat_grant = ChatGrant(service_sid=service_sid)
-token.add_grant(chat_grant)
+# Create a Video grant and add to token
+video_grant = VideoGrant(room='cool room')
+token.add_grant(video_grant)
 
 # Return token info as JSON
 print(token.to_jwt())
