@@ -7,6 +7,7 @@ public class Homework {
     private String filename;
     private String fileURL;
     private String UID;
+    private String name;
 
     public Homework() {}
 
@@ -17,6 +18,14 @@ public class Homework {
         this.filename = filename;
         this.fileURL = fileURL;
         this.UID = UID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getId() {

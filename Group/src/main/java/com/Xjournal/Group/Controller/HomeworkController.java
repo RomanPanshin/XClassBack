@@ -4,6 +4,7 @@ import com.Xjournal.Group.Entity.Homework;
 import com.Xjournal.Group.Entity.Result;
 import com.Xjournal.Group.Exception.StorageException;
 import com.Xjournal.Group.Repo.HomeworkRepository;
+import com.Xjournal.Group.Repo.UserRepository;
 import com.Xjournal.Group.Service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class HomeworkController {
     private StorageService storageService;
     @Autowired
     private HomeworkRepository homeworkRepository;
+
 
     @RequestMapping(value = "/homework/UploadHomeworkWithFile", method = RequestMethod.POST,
             consumes = {"multipart/form-data"})
@@ -47,9 +49,16 @@ public class HomeworkController {
     public Result<ArrayList<Homework>> getByExerciseId(@RequestParam(value = "exerciseId") String exerciseId) {
         try {
             // получить все дз
+            ArrayList<Homework> homeworks = homeworkRepository.getHomeworksByExerciseId(exerciseId);
+            ArrayList<Homework> result = new ArrayList<>();
+            for(Homework h : homeworks){
+                String name = UserRepository.getNamebyUid(h.getUID());
+                h.setName(name);
+                result.add(h);
+            }
             Result<ArrayList<Homework>> arrayListResult = new Result<ArrayList<Homework>>(
                     Result.ResultEnum.Success,
-                    homeworkRepository.getHomeworksByExerciseId(exerciseId)
+                    result
             );
             return arrayListResult;
         } catch (InterruptedException e) {

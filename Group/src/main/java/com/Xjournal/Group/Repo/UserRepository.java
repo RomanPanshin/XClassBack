@@ -153,6 +153,7 @@ public class UserRepository extends Repository {
             UserRecord user = null;
             try {
                 user = FirebaseAuth.getInstance().getUser(uid);
+                System.out.println(user);
                 return user.getDisplayName();
             } catch (FirebaseAuthException e) {
                 e.printStackTrace();

@@ -53,7 +53,7 @@ public class DBGenerator {
         for(String ln : lessonNames){
             for(String ch : classNames){
                 for(int i = 1; i != 12; i++){
-                    additionalLessonRepository.sendALessonToDB(new AdditionalLesson(ln, i + "_" + ch));
+                    additionalLessonRepository.sendALessonToDB(new AdditionalLesson(ln, i  + ch));
                 }
             }
         }
@@ -165,10 +165,11 @@ public class DBGenerator {
 
     public void Generate()  {
         try {
-            userRepository.DeleteUsers();
+//            userRepository.DeleteUsers();
             generateTeachers();
             generateClasses();
             generateStudents();
+            generateAdditionalLessons();
             for (ClassInfo c: classes) {
                 generateScheduleForClass(c.getId());
             }
@@ -177,10 +178,7 @@ public class DBGenerator {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (FirebaseAuthException e) {
-            e.printStackTrace();
         }
-
     }
 
 

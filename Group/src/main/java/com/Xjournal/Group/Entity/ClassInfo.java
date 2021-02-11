@@ -11,7 +11,7 @@ public class ClassInfo {
     public ClassInfo(String grade, String letter) {
         this.grade = grade;
         this.letter = letter;
-        this.id = String.format("%s_%s", grade, letter);
+        this.id =  grade +letter;
     }
 
     public String getId() {
