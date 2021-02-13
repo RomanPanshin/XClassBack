@@ -2,9 +2,7 @@ package com.Xjournal.Group.Controller;
 
 import com.Xjournal.Group.Entity.Result;
 import com.Xjournal.Group.Repo.UserRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +16,7 @@ public class TwilioController {
                                          @RequestParam(value = "lessonId") String lessonId){
         String name = UserRepository.getNamebyUid(uId);
         Process p = null;
-        String command = ("python2.7 /Volumes/podarochek/1/XClassBack/twilio-twilio-python-2fb5d37/token.py " + name);
+        String command = ("python3 /home/XClassBack/twilio-twilio-python-2fb5d37/token.py " + name);
         try {
             p = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
@@ -26,6 +24,28 @@ public class TwilioController {
             return new Result<>(Result.ResultEnum.Error, null);
         }
 
+        InputStream stdout = p.getInputStream();
+        InputStreamReader isr = new InputStreamReader(stdout);
+        BufferedReader br = new BufferedReader(isr);
+        try {
+            String result = br.readLine();
+            return new Result<>(Result.ResultEnum.Success, result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new Result<>(Result.ResultEnum.Error, null);
+    }
+
+    @RequestMapping(value = "/twilio/lesson/start", method = RequestMethod.POST)
+        public Result<String> getAccessToken(@RequestParam(value = "lessonId") String lessonId){
+        Process p = null;
+        String command = ("python3 /home/XClassBack/twilio-twilio-python-2fb5d37/room.py " + lessonId);
+        try {
+            p = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Result<>(Result.ResultEnum.Error, null);
+        }
         InputStream stdout = p.getInputStream();
         InputStreamReader isr = new InputStreamReader(stdout);
         BufferedReader br = new BufferedReader(isr);
