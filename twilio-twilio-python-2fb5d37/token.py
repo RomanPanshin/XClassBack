@@ -15,7 +15,7 @@ identity = sys.argv[1]
 token = AccessToken(account_sid, api_key, api_secret, identity=identity)
 
 # Create a Video grant and add to token
-video_grant = VideoGrant(room='cool room')
+video_grant = VideoGrant(room=sys.argv[2])
 token.add_grant(video_grant)
 
 # Return token info as JSON
