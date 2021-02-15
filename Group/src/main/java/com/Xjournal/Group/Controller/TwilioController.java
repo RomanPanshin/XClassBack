@@ -35,7 +35,7 @@ public class TwilioController {
             p = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             e.printStackTrace();
-            return new Result<>(Result.ResultEnum.Error, null);
+            return new Result<String>(Result.ResultEnum.Error, null);
         }
 
         InputStream stdout = p.getInputStream();
@@ -46,7 +46,7 @@ public class TwilioController {
             result = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
-            return new Result<>(Result.ResultEnum.Error, null);
+            return new Result<String>(Result.ResultEnum.Error, null);
         }
         if(userRepository.getClaimsByUid(uId) == UserRepository.STUDENT) {
             VideoLesson videoLesson = presentLessons.get(lessonId);
@@ -55,7 +55,7 @@ public class TwilioController {
             videoLesson.setPresentStudents(presentStudents);
             presentLessons.put(lessonId, videoLesson);
         }
-        return new Result<>(Result.ResultEnum.Success, result);
+        return new Result<String>(Result.ResultEnum.Success, result);
     }
 
     @RequestMapping(value = "/twilio/lesson/start", method = RequestMethod.POST)
@@ -70,7 +70,7 @@ public class TwilioController {
             p = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             e.printStackTrace();
-            return new Result<>(Result.ResultEnum.Error, null);
+            return new Result<String>(Result.ResultEnum.Error, null);
         }
         InputStream stdout = p.getInputStream();
         InputStreamReader isr = new InputStreamReader(stdout);
@@ -79,7 +79,7 @@ public class TwilioController {
             result = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
-            return new Result<>(Result.ResultEnum.Error, null);
+            return new Result<String>(Result.ResultEnum.Error, null);
         }
 
         ArrayList<MyUser> studentsByClass = null;
@@ -87,10 +87,10 @@ public class TwilioController {
             studentsByClass = userRepository.usersByClassId(classId);
         } catch (ExecutionException e) {
             e.printStackTrace();
-            return new Result<>(Result.ResultEnum.Error, null);
+            return new Result<String>(Result.ResultEnum.Error, null);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            return new Result<>(Result.ResultEnum.Error, null);
+            return new Result<String>(Result.ResultEnum.Error, null);
         }
 
         HashMap<String, Boolean> presentStudents = new HashMap<>();
@@ -99,7 +99,7 @@ public class TwilioController {
         }
         VideoLesson videoLesson = new VideoLesson(result, lessonId, presentStudents, simpleDate, uId);
         presentLessons.put(lessonId, videoLesson);
-        return new Result<>(Result.ResultEnum.Success, result);
+        return new Result<String>(Result.ResultEnum.Success, result);
     }
 
     @RequestMapping(value = "/twilio/lesson/stop", method = RequestMethod.POST)
@@ -119,17 +119,17 @@ public class TwilioController {
                                                  @RequestParam(value = "simpleDate")  String simpleDate){
         try {
             VideoLesson videoLesson = videoLessonRepository.getByLessonIdAndSimpleDate(lessonId, simpleDate);
-            return new Result<>(Result.ResultEnum.Success, videoLesson);
+            return new Result<VideoLesson>(Result.ResultEnum.Success, videoLesson);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return new Result<>(Result.ResultEnum.Error, null);
+        return new Result<VideoLesson>(Result.ResultEnum.Error, null);
     }
 
     @GetMapping("/twilio/lesson/present/get")
     public Result<HashMap<String, VideoLesson>> getCurrentVideoLessons(){
-        return new Result<>(Result.ResultEnum.Success, presentLessons);
+        return new Result<HashMap<String, VideoLesson>>(Result.ResultEnum.Success, presentLessons);
     }
 }

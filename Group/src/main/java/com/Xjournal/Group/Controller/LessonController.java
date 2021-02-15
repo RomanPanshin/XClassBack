@@ -65,7 +65,7 @@ public class LessonController{
                                            @RequestParam(value = "topic") String topic) {
             LessonTopic result = new LessonTopic(lessonId, topic, simpleDate);
             lessonTopicRepository.sendTopicToDB(result);
-            return new Result<>(Result.ResultEnum.Success, result);
+            return new Result<LessonTopic>(Result.ResultEnum.Success, result);
     }
 
     @GetMapping("/lessons/topic/get")
@@ -83,7 +83,7 @@ public class LessonController{
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return new Result<>(Result.ResultEnum.Error, null);
+        return new Result<LessonTopic>(Result.ResultEnum.Error, null);
     }
 
 }
