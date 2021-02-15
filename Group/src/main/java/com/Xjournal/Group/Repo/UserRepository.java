@@ -149,6 +149,17 @@ public class UserRepository extends Repository {
             return (String) currentClaims.keySet().iterator().next();
         }
 
+        public String getClaimsByUid(String uId){
+            UserRecord user = null;
+            try {
+                user = FirebaseAuth.getInstance().getUser(uId);
+            } catch (FirebaseAuthException e) {
+                e.printStackTrace();
+            }
+            Map<String, Object> currentClaims = user.getCustomClaims();
+            return (String) currentClaims.keySet().iterator().next();
+        }
+
         public static String getNamebyUid(String uid){
             UserRecord user = null;
             try {
@@ -160,6 +171,7 @@ public class UserRepository extends Repository {
             }
             return null;
         }
+
 
     public MyUser postReqest(String email, String password){
         CloseableHttpClient httpclient = HttpClients.createDefault();

@@ -1,9 +1,7 @@
 package com.Xjournal.Group.Repo;
 
-import com.Xjournal.Group.Entity.AdditionalLesson;
-import com.Xjournal.Group.Entity.GroupDate;
-import com.Xjournal.Group.Entity.Homework;
-import com.Xjournal.Group.Entity.Lesson;
+import com.Xjournal.Group.Entity.AdditionalFile;
+import com.Xjournal.Group.Entity.VideoLesson;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
@@ -13,13 +11,14 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+
 @Component
 @Scope("singleton")
-public class AdditionalLessonRepository {
-    public static final String COL_NAME="additional_lesson";
-    public void sendALessonToDB(AdditionalLesson additionalLesson){
+public class VideoLessonRepository {
+    public static final String COL_NAME="video_lessons_results";
+    public void sendFileToDB(VideoLesson videoLesson){
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(additionalLesson.getId()).set(additionalLesson);
+        ApiFuture<WriteResult> collectionsApiFuture = dbFirestore.collection(COL_NAME).document(videoLesson.getId()).set(videoLesson);
         try {
             System.out.println("Update time : " + collectionsApiFuture.get().getUpdateTime());
         } catch (InterruptedException e) {
@@ -28,18 +27,19 @@ public class AdditionalLessonRepository {
             e.printStackTrace();
         }
     }
-    public ArrayList<AdditionalLesson> getByClassId(String classId) throws InterruptedException, ExecutionException {
+
+    public VideoLesson getByLessonIdAndSimpleDate(String lessonId, String simpleDate) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference cities = dbFirestore.collection(COL_NAME);
 
-        Query query = cities.whereEqualTo("classId", classId);
+        Query query = cities.whereEqualTo("lessonId", lessonId).whereEqualTo("simpleDate", simpleDate);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
-        ArrayList<AdditionalLesson> result = new ArrayList<>();
+        ArrayList<VideoLesson> result = new ArrayList<>();
         for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-            AdditionalLesson obj = document.toObject(AdditionalLesson.class);
+            VideoLesson obj = document.toObject(VideoLesson.class);
             result.add(obj);
         }
-        return result;
+        return result.get(0);
     }
 }

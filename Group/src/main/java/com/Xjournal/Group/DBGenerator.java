@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -29,8 +30,11 @@ public class DBGenerator {
     private ArrayList<String> teachers = new ArrayList<>();
     private ArrayList<ClassInfo> classes = new ArrayList<>();
     private static final int  classCount= 11;
-    private static final int  teacherCount= 10;
+    private static final int  teacherCount= 22;
     private static final String[] classNames= {"А", "Б"};
+
+    private HashMap<String,Boolean > teachersOccupy = new HashMap<String, Boolean>();
+
     private String[] lessonNames = {
             "Русский язык",
             "Иностранный язык",
@@ -50,11 +54,15 @@ public class DBGenerator {
     };
 
     public void generateAdditionalLessons(){
-        for(String ln : lessonNames){
-            for(String ch : classNames){
-                for(int i = 1; i != 12; i++){
+        int k = 0;
+        for(String ch : classNames){
+            for(int i = 1; i != 12; i++){
+                for(String ln : lessonNames){
                     additionalLessonRepository.sendALessonToDB(new AdditionalLesson(ln, i  + ch));
+                    k++;
                 }
+                System.out.println(k + " " + i  + ch);
+                k = 0;
             }
         }
     }
@@ -77,7 +85,48 @@ public class DBGenerator {
             " Ирина Анатольевна",
             " Николай Викторович",
             " Валерий Абрамович",
-            " Юрий Петрович"};
+            " Юрий Петрович",
+            " Хож-Ахмед Ахмадович",
+            " Леонид Давидович",
+            " Платон Сергеевич",
+            " Филипп Денисович",
+            " Евгений Николаевич",
+            " Владимир Осипович",
+            " Роман Сергеевич",
+            " Владимир Генрихович",
+            " Ахмет Хамиевич",
+            " Владимир Алексеевич",
+            " Андрей Олегович",
+            " Игорь Михайлович",
+            " Александр Викторович",
+            " Олег Николаеви",
+            " Линор",
+            " Владимир Иванович",
+            " Андрей Николаевич",
+            " Алексей Андреевич",
+            " Дмитрий Степанович",
+            " Дмитрий Анатольевич",
+            " Леонид Григорьевич",
+            " Игорь Борисович",
+            " Василий Фёдорович",
+            " Евгений Валерьевич",
+            " Александр Николаевич",
+            " Андрей Вадимович",
+            " Дмитрий Сергеевич",
+            " Валерий Дмитриевич",
+            " Алексей Андреевич",
+            " Дмитрий Степанович",
+            " Дмитрий Анатольевич",
+            " Леонид Григорьевич",
+            " Игорь Борисович",
+            " Василий Фёдорович",
+            " Евгений Валерьевич",
+            " Александр Николаевич",
+            " Андрей Вадимович",
+            " Дмитрий Сергеевич",
+            " Валерий Дмитриевич"
+    };
+
 
     private String[] studentsSurNames = {
             "Смирнов" ,
@@ -161,22 +210,48 @@ public class DBGenerator {
         }
     }
 
+    private void generateScheduleForClass2(String classId) throws ExecutionException, InterruptedException {
+        Random r = new Random(100);
+        for (GroupDate.DayOfWeek d: GroupDate.DayOfWeek.values()) {
+            int count = 6;
+            for (int i = 0; i < count; i++) {
+                String teacherIndex = "";
+                String teacher = "";
+                do {
+                    teacher = teachers.get(r.nextInt(teacherCount));
+                    teacherIndex = teacher+"-"+d+"-"+i+1;
+                } while (teachersOccupy.getOrDefault(teacherIndex,false));
+                teachersOccupy.put(teacherIndex,true);
+
+                String lessonName = getLessonForTeacher(teacher);
+                Lesson lesson =  new Lesson(lessonName,teacher,classId,new GroupDate(d,i+1));
+                System.out.println("lesson "+lesson.getIdclass() +" "+ lessonName + " " +(i+1));
+                lessonRepository.addLessonDetails(lesson);
+            }
+        }
+    }
+
+
+
+
 
 
     public void Generate()  {
         try {
-//            userRepository.DeleteUsers();
+            userRepository.DeleteUsers();
             generateTeachers();
             generateClasses();
             generateStudents();
             generateAdditionalLessons();
             for (ClassInfo c: classes) {
-                generateScheduleForClass(c.getId());
+                generateScheduleForClass2(c.getId());
             }
 
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (FirebaseAuthException e) {
             e.printStackTrace();
         }
     }

@@ -1,16 +1,30 @@
 package com.Xjournal.Group.Controller;
 
+import com.Xjournal.Group.Entity.MyUser;
 import com.Xjournal.Group.Entity.Result;
+import com.Xjournal.Group.Entity.VideoLesson;
 import com.Xjournal.Group.Repo.UserRepository;
+import com.Xjournal.Group.Repo.VideoLessonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class TwilioController {
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private VideoLessonRepository videoLessonRepository;
+
+    private HashMap<String, VideoLesson> presentLessons = new HashMap<>();
+
     @GetMapping("/twilio/getAccessToken")
     public Result<String> getAccessToken(@RequestParam(value = "UID") String uId,
                                          @RequestParam(value = "lessonId") String lessonId){
@@ -27,19 +41,31 @@ public class TwilioController {
         InputStream stdout = p.getInputStream();
         InputStreamReader isr = new InputStreamReader(stdout);
         BufferedReader br = new BufferedReader(isr);
+        String result;
         try {
-            String result = br.readLine();
-            return new Result<>(Result.ResultEnum.Success, result);
+            result = br.readLine();
         } catch (IOException e) {
             e.printStackTrace();
+            return new Result<>(Result.ResultEnum.Error, null);
         }
-        return new Result<>(Result.ResultEnum.Error, null);
+        if(userRepository.getClaimsByUid(uId) == UserRepository.STUDENT) {
+            VideoLesson videoLesson = presentLessons.get(lessonId);
+            HashMap<String, Boolean> presentStudents = videoLesson.getPresentStudents();
+            presentStudents.put(uId, true);
+            videoLesson.setPresentStudents(presentStudents);
+            presentLessons.put(lessonId, videoLesson);
+        }
+        return new Result<>(Result.ResultEnum.Success, result);
     }
 
     @RequestMapping(value = "/twilio/lesson/start", method = RequestMethod.POST)
-        public Result<String> getAccessToken(@RequestParam(value = "lessonId") String lessonId){
+        public Result<String> StartVideoLesson(@RequestParam(value = "lessonId") String lessonId,
+                                               @RequestParam(value = "UID") String uId,
+                                               @RequestParam(value = "simpleDate") String simpleDate,
+                                               @RequestParam(value = "classId") String classId){
         Process p = null;
         String command = ("python3 /home/XClassBack/twilio-twilio-python-2fb5d37/room.py " + lessonId);
+        String result;
         try {
             p = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
@@ -50,11 +76,60 @@ public class TwilioController {
         InputStreamReader isr = new InputStreamReader(stdout);
         BufferedReader br = new BufferedReader(isr);
         try {
-            String result = br.readLine();
-            return new Result<>(Result.ResultEnum.Success, result);
+            result = br.readLine();
         } catch (IOException e) {
+            e.printStackTrace();
+            return new Result<>(Result.ResultEnum.Error, null);
+        }
+
+        ArrayList<MyUser> studentsByClass = null;
+        try {
+            studentsByClass = userRepository.usersByClassId(classId);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return new Result<>(Result.ResultEnum.Error, null);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return new Result<>(Result.ResultEnum.Error, null);
+        }
+
+        HashMap<String, Boolean> presentStudents = new HashMap<>();
+        for(MyUser student : studentsByClass){
+            presentStudents.put(student.getuId(), false);
+        }
+        VideoLesson videoLesson = new VideoLesson(result, lessonId, presentStudents, simpleDate, uId);
+        presentLessons.put(lessonId, videoLesson);
+        return new Result<>(Result.ResultEnum.Success, result);
+    }
+
+    @RequestMapping(value = "/twilio/lesson/stop", method = RequestMethod.POST)
+    public Result<VideoLesson> stopLesson(@RequestParam(value = "lessonId") String lessonId){
+        VideoLesson result = presentLessons.get(lessonId);
+        presentLessons.remove(lessonId);
+        return new Result<VideoLesson>(Result.ResultEnum.Success, result);
+    }
+
+    @RequestMapping(value = "/twilio/lesson/results/upload", method = RequestMethod.POST)
+    public Result<String> uploadVLessonResults(@RequestParam(value = "videoLesson")  VideoLesson videoLesson) {
+        videoLessonRepository.sendFileToDB(videoLesson);
+        return new Result<String>(Result.ResultEnum.Success, "");
+    }
+    @GetMapping("/twilio/lesson/results/get")
+    public Result<VideoLesson> getVLessonResults(@RequestParam(value = "lessonId")  String lessonId,
+                                                 @RequestParam(value = "simpleDate")  String simpleDate){
+        try {
+            VideoLesson videoLesson = videoLessonRepository.getByLessonIdAndSimpleDate(lessonId, simpleDate);
+            return new Result<>(Result.ResultEnum.Success, videoLesson);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
         return new Result<>(Result.ResultEnum.Error, null);
+    }
+
+    @GetMapping("/twilio/lesson/present/get")
+    public Result<HashMap<String, VideoLesson>> getCurrentVideoLessons(){
+        return new Result<>(Result.ResultEnum.Success, presentLessons);
     }
 }

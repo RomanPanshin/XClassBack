@@ -13,7 +13,6 @@ public class RootController {
     @RequestMapping(method = RequestMethod.GET)
     public void swaggerUi() {
         dbGenerator.Generate();
-        dbGenerator.generateAdditionalLessons();
         return;
     }
 }
