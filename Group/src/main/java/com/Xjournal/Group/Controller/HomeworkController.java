@@ -36,7 +36,8 @@ public class HomeworkController {
         return new Result<Homework>(Result.ResultEnum.Success, homework);
     }
 
-    @RequestMapping(value = "/homework/UploadHomework", method = RequestMethod.POST)
+    @RequestMapping(value = "/homework/UploadHomework", method = RequestMethod.POST,
+            consumes = {"multipart/form-data"})
     public Result<Homework> uploadHomework(@RequestParam(value = "exerciseId") String exerciseId,
                                            @RequestParam(value = "description") String description,
                                            @RequestParam(value = "UID") String UID) {
