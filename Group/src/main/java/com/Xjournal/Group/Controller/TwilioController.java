@@ -23,7 +23,7 @@ public class TwilioController {
     @Autowired
     private VideoLessonRepository videoLessonRepository;
 
-    private HashMap<String, VideoLesson> presentLessons = new HashMap<>();
+    private static HashMap<String, VideoLesson> presentLessons = new HashMap<>();
 
     @GetMapping("/twilio/getAccessToken")
     public Result<String> getAccessToken(@RequestParam(value = "UID") String uId,
@@ -50,10 +50,7 @@ public class TwilioController {
         }
         if(userRepository.getClaimsByUid(uId) == UserRepository.STUDENT) {
             VideoLesson videoLesson = presentLessons.get(lessonId);
-            HashMap<String, Boolean> presentStudents = videoLesson.getPresentStudents();
-            presentStudents.put(uId, true);
-            videoLesson.setPresentStudents(presentStudents);
-            presentLessons.put(lessonId, videoLesson);
+            videoLesson.getPresentStudents().put(uId, true);
         }
         return new Result<String>(Result.ResultEnum.Success, result);
     }
@@ -89,6 +86,7 @@ public class TwilioController {
             HashMap<String, Boolean> presentStudents = new HashMap<>();
             for(MyUser student : studentsByClass){
                 presentStudents.put(student.getuId(), false);
+                System.out.println("add student "+student.getuId());
             }
             VideoLesson videoLesson = new VideoLesson(result, lessonId, presentStudents, simpleDate, uId);
             videoLesson.toString();
