@@ -86,6 +86,14 @@ public class TwilioController {
         try {
             studentsByClass = userRepository.usersByClassId(classId);
             System.out.println(studentsByClass.toString());
+            HashMap<String, Boolean> presentStudents = new HashMap<>();
+            for(MyUser student : studentsByClass){
+                presentStudents.put(student.getuId(), false);
+            }
+            VideoLesson videoLesson = new VideoLesson(result, lessonId, presentStudents, simpleDate, uId);
+            videoLesson.toString();
+            presentLessons.put(lessonId, videoLesson);
+            return new Result<String>(Result.ResultEnum.Success, result);
         } catch (ExecutionException e) {
             e.printStackTrace();
             return new Result<String>(Result.ResultEnum.Error, null);
@@ -94,13 +102,6 @@ public class TwilioController {
             return new Result<String>(Result.ResultEnum.Error, null);
         }
 
-        HashMap<String, Boolean> presentStudents = new HashMap<>();
-        for(MyUser student : studentsByClass){
-            presentStudents.put(student.getuId(), false);
-        }
-        VideoLesson videoLesson = new VideoLesson(result, lessonId, presentStudents, simpleDate, uId);
-        presentLessons.put(lessonId, videoLesson);
-        return new Result<String>(Result.ResultEnum.Success, result);
     }
 
     @RequestMapping(value = "/twilio/lesson/stop", method = RequestMethod.POST)

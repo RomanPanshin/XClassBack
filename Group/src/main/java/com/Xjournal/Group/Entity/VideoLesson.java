@@ -59,4 +59,15 @@ public class VideoLesson {
     public void setTeacherId(String teacherId) {
         this.teacherId = teacherId;
     }
+
+    @Override
+    public String toString() {
+        return "VideoLesson{" +
+                "id='" + id + '\'' +
+                ", lessonId='" + lessonId + '\'' +
+                ", PresentStudents=" + PresentStudents +
+                ", simpleDate='" + simpleDate + '\'' +
+                ", teacherId='" + teacherId + '\'' +
+                '}';
+    }
 }
