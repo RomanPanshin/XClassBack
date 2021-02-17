@@ -85,6 +85,7 @@ public class TwilioController {
         ArrayList<MyUser> studentsByClass = null;
         try {
             studentsByClass = userRepository.usersByClassId(classId);
+            System.out.println(studentsByClass.toString());
         } catch (ExecutionException e) {
             e.printStackTrace();
             return new Result<String>(Result.ResultEnum.Error, null);
