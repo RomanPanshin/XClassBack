@@ -30,7 +30,7 @@ public class TwilioController {
                                          @RequestParam(value = "lessonId") String lessonId){
         String name = UserRepository.getNamebyUid(uId);
         Process p = null;
-        String command = ("python3 /home/XClassBack/twilio-twilio-python-2fb5d37/token.py " + name);
+        String command = ("python3 /home/XClassBack/twilio-twilio-python-2fb5d37/token_2.py " + name);
         try {
             p = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
