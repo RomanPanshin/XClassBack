@@ -2,10 +2,7 @@ package com.Xjournal.Group;
 
 import com.Xjournal.Group.Entity.*;
 import com.Xjournal.Group.Entity.GroupDate;
-import com.Xjournal.Group.Repo.AdditionalLessonRepository;
-import com.Xjournal.Group.Repo.ClassInfoRepository;
-import com.Xjournal.Group.Repo.LessonRepository;
-import com.Xjournal.Group.Repo.UserRepository;
+import com.Xjournal.Group.Repo.*;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -25,6 +23,8 @@ public class DBGenerator {
     private ClassInfoRepository classInfoRepository;
     @Autowired
     private AdditionalLessonRepository additionalLessonRepository;
+    @Autowired
+    private VideoLessonRepository videoLessonRepository;
 
 
     private ArrayList<String> teachers = new ArrayList<>();
@@ -255,7 +255,17 @@ public class DBGenerator {
             e.printStackTrace();
         }
     }
+    public void createUU(){
+        String id = userRepository.createUser("admins"+"@school.ru","roma123","Роман Паньшин",UserRepository.ADMIN,null);
+    }
 
+    public void uploadVideoLesson(){
+        HashMap<String, Boolean> presentStudents = new HashMap<>();
+        presentStudents.put("1UsH8az6tpb2jnkBhLrlpscS0k33", true);
+        presentStudents.put("brsoxtbmr3cneJp3iQFVQzETrmc2", false);
+        VideoLesson result = new VideoLesson(UUID.randomUUID().toString(), "38eb3cbc-ec5e-4cbc-92db-4733fa16a525", presentStudents, "18.02.2021", "0AczFiV5UdQhf3EYJBM6R2b5V3h2");
+        videoLessonRepository.sendFileToDB(result);
+    }
 
     public void Clear(){
 

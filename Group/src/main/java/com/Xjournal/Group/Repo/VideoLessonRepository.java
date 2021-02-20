@@ -28,11 +28,11 @@ public class VideoLessonRepository {
         }
     }
 
-    public VideoLesson getByLessonIdAndSimpleDate(String lessonId, String simpleDate) throws InterruptedException, ExecutionException {
+    public VideoLesson getByLessonId(String lessonId) throws InterruptedException, ExecutionException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         CollectionReference cities = dbFirestore.collection(COL_NAME);
 
-        Query query = cities.whereEqualTo("lessonId", lessonId).whereEqualTo("simpleDate", simpleDate);
+        Query query = cities.whereEqualTo("lessonId", lessonId);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         ArrayList<VideoLesson> result = new ArrayList<>();

@@ -12,7 +12,7 @@ public class RootController {
     DBGenerator dbGenerator;
     @RequestMapping(method = RequestMethod.GET)
     public void swaggerUi() {
-        dbGenerator.Generate();
+        dbGenerator.uploadVideoLesson();
         return;
     }
 }

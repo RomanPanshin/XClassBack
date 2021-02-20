@@ -115,10 +115,9 @@ public class TwilioController {
         return new Result<String>(Result.ResultEnum.Success, "");
     }
     @GetMapping("/twilio/lesson/results/get")
-    public Result<VideoLesson> getVLessonResults(@RequestParam(value = "lessonId")  String lessonId,
-                                                 @RequestParam(value = "simpleDate")  String simpleDate){
+    public Result<VideoLesson> getVLessonResults(@RequestParam(value = "lessonId")  String lessonId){
         try {
-            VideoLesson videoLesson = videoLessonRepository.getByLessonIdAndSimpleDate(lessonId, simpleDate);
+            VideoLesson videoLesson = videoLessonRepository.getByLessonId(lessonId);
             return new Result<VideoLesson>(Result.ResultEnum.Success, videoLesson);
         } catch (InterruptedException e) {
             e.printStackTrace();
