@@ -25,34 +25,15 @@ public class TwilioController {
 
     private static HashMap<String, VideoLesson> presentLessons = new HashMap<>();
 
-    @GetMapping("/twilio/getAccessToken")
+    @GetMapping("/twilio/confirm")
     public Result<String> getAccessToken(@RequestParam(value = "UID") String uId,
                                          @RequestParam(value = "lessonId") String lessonId){
         String name = UserRepository.getNamebyUid(uId);
-        Process p = null;
-        String command = ("python3 /home/XClassBack/twilio-twilio-python-2fb5d37/token_2.py " + name);
-        try {
-            p = Runtime.getRuntime().exec(command);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new Result<String>(Result.ResultEnum.Error, null);
-        }
-
-        InputStream stdout = p.getInputStream();
-        InputStreamReader isr = new InputStreamReader(stdout);
-        BufferedReader br = new BufferedReader(isr);
-        String result;
-        try {
-            result = br.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new Result<String>(Result.ResultEnum.Error, null);
-        }
         if(userRepository.getClaimsByUid(uId) == UserRepository.STUDENT) {
             VideoLesson videoLesson = presentLessons.get(lessonId);
             videoLesson.getPresentStudents().put(uId, true);
         }
-        return new Result<String>(Result.ResultEnum.Success, result);
+        return new Result<String>(Result.ResultEnum.Success, "confirmed");
     }
 
     @RequestMapping(value = "/twilio/lesson/start", method = RequestMethod.POST)
