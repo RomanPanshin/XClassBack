@@ -67,14 +67,5 @@ public class Question {
         return result;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "description='" + description + '\'' +
-                ", answers=" + answers +
-                ", id='" + id + '\'' +
-                '}';
-    }
-
     public Question(){}
 }
