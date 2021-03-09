@@ -3,11 +3,14 @@ package com.Xjournal.Group.Controller;
 import com.Xjournal.Group.Entity.*;
 import com.Xjournal.Group.Repo.TestRepository;
 import com.Xjournal.Group.Repo.TestResultRepository;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -20,10 +23,11 @@ public class TestController {
 
     @RequestMapping(value = "/test/UploadTest", method = RequestMethod.POST)
     public Result<Test> uploadHomework(@RequestParam(value = "description") String description,
-                                       @RequestParam(value = "answers") ArrayList<Question> questions,
+                                       @RequestParam(value = "answers") String questions,
                                        @RequestParam(value = "lessonId") String lessonId,
                                        @RequestParam(value = "date") String date){
-        Test test = new Test(description, questions, lessonId, date);
+        ArrayList<Question> questionArrayList = new Gson().fromJson(questions, new TypeToken<List<Question>>(){}.getType());
+        Test test = new Test(description, questionArrayList, lessonId, date);
         testRepository.sendTestToDB(test);
         return new Result<Test>(Result.ResultEnum.Success, test);
     }
