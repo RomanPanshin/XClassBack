@@ -29,7 +29,9 @@ public class TestController {
                                        @RequestParam(value = "answers") String questions,
                                        @RequestParam(value = "lessonId") String lessonId,
                                        @RequestParam(value = "date") String date){
+        System.out.println(questions);
         ArrayList<Question> questionArrayList = new Gson().fromJson(questions, new TypeToken<List<Question>>(){}.getType());
+        System.out.println(questionArrayList.toString());
         Test test = new Test(description, questionArrayList, lessonId, date);
 
         testRepository.sendTestToDB(test);
